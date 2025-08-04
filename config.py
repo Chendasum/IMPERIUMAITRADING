@@ -16,7 +16,7 @@ class TradingConfig:
     TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
     # Trading Parameters
-    TRADING_MODE = os.getenv('TRADING_MODE', 'paper')
+    TRADING_MODE = 'LIVE'  # REAL TRADING ONLY - NO SIMULATION
     INITIAL_BALANCE = float(os.getenv('INITIAL_BALANCE', 10000))
     MAX_RISK_PER_TRADE = float(os.getenv('MAX_RISK_PER_TRADE', 0.02))
     DAILY_LOSS_LIMIT = float(os.getenv('DAILY_LOSS_LIMIT', 0.05))
