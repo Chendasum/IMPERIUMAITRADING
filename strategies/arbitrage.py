@@ -364,3 +364,6 @@ class ArbitrageStrategy:
             'total_profit': total_profit,
             'failed_opportunities': len(self.failed_opportunities)
         }
+
+
+# Note: ArbitrageStrategy is already the correct class name
