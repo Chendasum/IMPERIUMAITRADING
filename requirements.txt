@@ -6,4 +6,6 @@ numpy>=1.25.0
 python-dotenv>=1.0.0
 schedule>=1.2.0
 requests>=2.31.0
-ta-lib>=0.4.25
+TA-Lib-Precompiled>=0.4.25
+trafilatura>=1.6.0
+asyncio
