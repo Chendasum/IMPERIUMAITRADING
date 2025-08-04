@@ -286,7 +286,7 @@ class TradingAISuperpower:
 
         # Check maximum drawdown
         risk_metrics = self.risk_manager.get_risk_metrics()
-        if risk_metrics['current_balance'] < risk_metrics['initial_balance'] * 0.85:  # 15% drawdown
+        if risk_metrics['current_balance'] < self.risk_manager.initial_balance * 0.85:  # 15% drawdown
             await self.notifier.send_message("🛑 Maximum drawdown exceeded - emergency stop")
             return True
 
