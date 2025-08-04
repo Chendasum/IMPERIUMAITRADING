@@ -10,7 +10,7 @@ class RiskManager:
 
     def __init__(self):
         # Core balance tracking
-        self.initial_balance = None
+        self.initial_balance = 10000
         self.current_balance = None
         self.peak_balance = None  # For drawdown calculation
 
