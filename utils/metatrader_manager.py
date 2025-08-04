@@ -40,6 +40,9 @@ class MetaTraderManager:
             
             # Get accounts from MetaAPI
             try:
+                import urllib3
+                urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+                
                 response = requests.get(
                     'https://mt-provisioning-api-v1.agiliumtrade.agiliumtrade.ai/users/current/accounts',
                     headers=headers,
@@ -85,6 +88,9 @@ class MetaTraderManager:
             
             # Get live prices from MetaAPI
             try:
+                import urllib3
+                urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+                
                 prices = {}
                 for symbol in self.forex_pairs:
                     response = requests.get(
@@ -138,6 +144,9 @@ class MetaTraderManager:
             
             # Get historical data from MetaAPI
             try:
+                import urllib3
+                urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+                
                 response = requests.get(
                     f'https://mt-client-api-v1.agiliumtrade.agiliumtrade.ai/users/current/accounts/{self.account_id}/historical-market-data/symbols/{symbol}/timeframes/1h/candles',
                     headers=headers,
