@@ -19,7 +19,7 @@ class ExchangeManager:
             try:
                 exchange_config = {
                     'enableRateLimit': True,
-                    'sandbox': False,  # Always use live trading environment
+                    'sandbox': False,  # LIVE TRADING ENVIRONMENT ONLY
                 }
                 
                 # Add API keys only if provided
@@ -35,12 +35,12 @@ class ExchangeManager:
                 
             except Exception as e:
                 logger.error(f"❌ Binance initialization failed: {e}")
-                # Create a simulation mode for complete paper trading
-                logger.info("💡 Running in simulation mode")
+                # LIVE TRADING ONLY - NO SIMULATION MODE
+                logger.error("❌ LIVE TRADING FAILED - NO SIMULATION FALLBACK")
 
-            # For demo/paper trading, focus on Binance only
-            # Multi-exchange arbitrage can be added when ready for live trading
-            logger.info("💡 Running in single-exchange mode (Binance) for paper trading")
+            # LIVE TRADING - Multi-exchange support
+            # Ready for real arbitrage trading
+            logger.info("🚀 LIVE TRADING MODE - Real exchange connections")
 
             # Test connections
             for name, exchange in self.exchanges.items():
@@ -79,32 +79,9 @@ class ExchangeManager:
 
         except Exception as e:
             logger.error(f"❌ Failed to get prices from {exchange_name}: {e}")
-            return self._simulate_prices()
+            return {}  # NO SIMULATION - REAL PRICES ONLY
     
-    def _simulate_prices(self):
-        """Simulate realistic crypto prices for paper trading"""
-        import random
-        
-        base_prices = {
-            'BTC/USDT': 63500,
-            'ETH/USDT': 3420,  
-            'BNB/USDT': 598
-        }
-        
-        prices = {}
-        for pair, base_price in base_prices.items():
-            # Add random market fluctuation (±2%)
-            fluctuation = random.uniform(-0.02, 0.02)
-            mid_price = base_price * (1 + fluctuation)
-            spread = mid_price * 0.001  # 0.1% spread
-            
-            prices[pair] = {
-                'bid': mid_price - spread/2,
-                'ask': mid_price + spread/2,
-                'last': mid_price
-            }
-            
-        return prices
+    # SIMULATION FUNCTIONS REMOVED - REAL TRADING ONLY
 
     async def get_ohlcv(self, exchange_name, symbol, timeframe, limit):
         """Get OHLCV data for technical analysis"""
@@ -112,10 +89,7 @@ class ExchangeManager:
             if exchange_name not in self.exchanges:
                 return []
 
-            # For paper trading, simulate OHLCV data
-            if self.config.TRADING_MODE == 'paper':
-                return self._simulate_ohlcv(symbol, limit)
-                
+            # LIVE TRADING ONLY - Real OHLCV data
             exchange = self.exchanges[exchange_name]
             ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=limit)
 
@@ -123,42 +97,6 @@ class ExchangeManager:
 
         except Exception as e:
             logger.error(f"❌ Failed to get OHLCV from {exchange_name}: {e}")
-            return self._simulate_ohlcv(symbol, limit)
+            return []  # NO SIMULATION - REAL DATA ONLY
     
-    def _simulate_ohlcv(self, symbol, limit):
-        """Simulate OHLCV data for paper trading"""
-        import random
-        from datetime import datetime, timedelta
-        
-        base_prices = {
-            'BTC/USDT': 63500,
-            'ETH/USDT': 3420,
-            'BNB/USDT': 598
-        }
-        
-        base_price = base_prices.get(symbol, 1000)
-        ohlcv = []
-        
-        current_time = datetime.now().timestamp() * 1000
-        
-        for i in range(limit):
-            # Simulate price movement
-            change = random.uniform(-0.005, 0.005)  # ±0.5% per candle
-            price = base_price * (1 + change * (i + 1) / limit)
-            
-            high = price * (1 + abs(change) * 0.5)
-            low = price * (1 - abs(change) * 0.5)
-            volume = random.uniform(100, 1000)
-            
-            # [timestamp, open, high, low, close, volume]
-            candle = [
-                current_time - (limit - i) * 3600000,  # 1 hour intervals
-                price * 0.999,  # open
-                high,           # high  
-                low,            # low
-                price,          # close
-                volume          # volume
-            ]
-            ohlcv.append(candle)
-            
-        return ohlcv
+    # ALL SIMULATION FUNCTIONS REMOVED - LIVE TRADING ONLY
