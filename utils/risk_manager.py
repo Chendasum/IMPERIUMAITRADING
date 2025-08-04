@@ -369,6 +369,11 @@ class RiskManager:
             }
         }
 
+    def check_daily_loss_limit(self):
+        """Check if daily loss limit has been reached"""
+        daily_loss_pct = self.daily_losses / self.current_balance if self.current_balance > 0 else 0
+        return daily_loss_pct >= self.daily_loss_limit
+
     def get_risk_metrics(self):
         """Get current risk metrics for reporting"""
         return {
