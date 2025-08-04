@@ -1,4 +1,0 @@
-
-"""
-Trading strategies package
-"""
