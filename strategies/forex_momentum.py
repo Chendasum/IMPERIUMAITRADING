@@ -8,7 +8,7 @@ from typing import List, Dict, Optional
 logger = logging.getLogger(__name__)
 
 
-class ProfessionalForexMomentumStrategy:
+class ForexMomentumStrategy:
     """Professional Forex Momentum Strategy with Enhanced Market Analysis"""
 
     def __init__(self):
@@ -507,7 +507,7 @@ class ProfessionalForexMomentumStrategy:
             rs = avg_gain / avg_loss
             rsi = 100 - (100 / (1 + rs))
 
-            return max(0, min(100, rsi))
+            return max(0.0, min(100.0, float(rsi)))
 
         except Exception as e:
             logger.error(f"❌ RSI calculation failed: {e}")
