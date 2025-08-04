@@ -65,8 +65,16 @@ class TradingAISuperpower:
             await self.metatrader_manager.initialize()
             logger.info("✅ MetaTrader forex integration ready")
 
-            # Initialize risk management
-            self.risk_manager.initialize(self.config.INITIAL_BALANCE)
+            # Get REAL account balance from MetaTrader
+            real_balance_info = await self.metatrader_manager.get_account_balance()
+            if real_balance_info and real_balance_info['balance'] > 0:
+                real_balance = real_balance_info['balance']
+                logger.info(f"💰 REAL ACCOUNT BALANCE DETECTED: ${real_balance:.2f}")
+                # Initialize risk management with REAL balance
+                self.risk_manager.initialize(real_balance, self.metatrader_manager)
+            else:
+                logger.warning("⚠️ Could not fetch real balance, using fallback")
+                self.risk_manager.initialize(self.config.INITIAL_BALANCE, self.metatrader_manager)
             logger.info("✅ Risk management system ready")
 
             # Initialize notification system
@@ -176,7 +184,7 @@ class TradingAISuperpower:
         """Execute a trading signal"""
         try:
             # Check if trade passes risk management
-            if not self.risk_manager.validate_trade(signal):
+            if not await self.risk_manager.validate_trade(signal):
                 logger.info(
                     f"❌ Trade rejected by risk management: {signal['pair']}")
                 return False
@@ -215,7 +223,7 @@ class TradingAISuperpower:
         """Execute a forex trading signal"""
         try:
             # Check if trade passes risk management
-            if not self.risk_manager.validate_trade(signal):
+            if not await self.risk_manager.validate_trade(signal):
                 logger.info(f"❌ Forex trade rejected by risk management: {signal['pair']}")
                 return False
 
