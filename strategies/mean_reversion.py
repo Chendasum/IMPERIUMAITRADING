@@ -707,3 +707,6 @@ class MeanReversionStrategy:
     def get_strategy_performance(self):
         """Get comprehensive strategy performance metrics"""
         return self.strategy_performance
+
+
+# Note: MeanReversionStrategy is already the correct class name
