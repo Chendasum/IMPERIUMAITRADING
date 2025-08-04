@@ -1,0 +1,14 @@
+{
+  "name": "imperium-ai-trading",
+  "runtime": "python3.11",
+  "build": {
+    "command": "pip install -r requirements.txt"
+  },
+  "start": {
+    "command": "python main.py"
+  },
+  "environment": {
+    "PYTHONPATH": ".",
+    "TRADING_MODE": "LIVE"
+  }
+}
