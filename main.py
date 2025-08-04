@@ -28,7 +28,7 @@ logging.basicConfig(level=logging.INFO,
 logger = logging.getLogger(__name__)
 
 
-class EnhancedTradingAISuperpower:
+class TradingAISuperpower:
     """Enhanced AI Trading System with Professional Features"""
 
     def __init__(self):
@@ -54,28 +54,28 @@ class EnhancedTradingAISuperpower:
         self.trade_count = 0
         self.winning_trades = 0
         self.losing_trades = 0
-        
+
         # Portfolio management
         self.active_positions = {}
         self.position_correlations = {}
         self.strategy_performance = defaultdict(dict)
-        
+
         # Advanced metrics
         self.sharpe_ratio = 0.0
         self.max_drawdown = 0.0
         self.profit_factor = 0.0
         self.win_rate = 0.0
-        
+
         # Market condition tracking
         self.market_volatility = 0.0
         self.market_trend = 'neutral'
         self.last_volatility_check = datetime.now()
-        
+
         # Circuit breakers
         self.emergency_stop = False
         self.consecutive_losses = 0
         self.max_consecutive_losses = 5
-        
+
         # Performance optimization
         self.signal_history = []
         self.execution_times = []
@@ -88,18 +88,18 @@ class EnhancedTradingAISuperpower:
             # Initialize exchange connections
             await self.exchange_manager.initialize()
             logger.info("✅ Exchange connections established")
-            
+
             # Initialize live trading executor
             self.live_executor = LiveTradingExecutor(self.exchange_manager)
             logger.info("🚀 Live trading executor ready")
-            
+
             # Initialize MetaTrader for forex
             await self.metatrader_manager.initialize()
             logger.info("✅ MetaTrader forex integration ready")
 
             # Enhanced balance initialization
             await self._initialize_enhanced_balance()
-            
+
             # Initialize notification system
             await self.notifier.initialize()
             logger.info("✅ Telegram notifications ready")
@@ -122,7 +122,7 @@ class EnhancedTradingAISuperpower:
         """Enhanced balance initialization with multiple account support"""
         total_balance = 0.0
         balance_sources = []
-        
+
         # Get MetaTrader balance
         mt_balance_info = await self.metatrader_manager.get_account_balance()
         if mt_balance_info and mt_balance_info['balance'] > 0:
@@ -130,7 +130,7 @@ class EnhancedTradingAISuperpower:
             total_balance += mt_balance
             balance_sources.append(f"MetaTrader: ${mt_balance:.2f}")
             logger.info(f"💰 MetaTrader Balance: ${mt_balance:.2f}")
-        
+
         # Get crypto exchange balances (if available)
         try:
             crypto_balance = await self._get_crypto_balance()
@@ -139,13 +139,13 @@ class EnhancedTradingAISuperpower:
                 balance_sources.append(f"Crypto: ${crypto_balance:.2f}")
         except Exception as e:
             logger.warning(f"⚠️ Could not fetch crypto balance: {e}")
-        
+
         # Use fallback if no real balances found
         if total_balance == 0:
             total_balance = self.config.INITIAL_BALANCE
             balance_sources.append(f"Fallback: ${total_balance:.2f}")
             logger.warning("⚠️ Using fallback balance")
-        
+
         # Initialize risk management
         self.risk_manager.initialize(total_balance, self.metatrader_manager)
         logger.info(f"💰 Total Account Balance: ${total_balance:.2f}")
@@ -164,12 +164,12 @@ class EnhancedTradingAISuperpower:
         """Initialize strategies with enhanced configuration"""
         for name, strategy_config in self.strategies.items():
             strategy = strategy_config['handler']
-            
+
             if name == 'forex_momentum':
                 strategy.initialize(self.metatrader_manager, self.risk_manager)
             else:
                 strategy.initialize(self.exchange_manager, self.risk_manager)
-            
+
             # Initialize strategy performance tracking
             self.strategy_performance[name] = {
                 'trades': 0,
@@ -180,7 +180,7 @@ class EnhancedTradingAISuperpower:
                 'sharpe_ratio': 0.0,
                 'active_positions': 0
             }
-            
+
             logger.info(f"✅ Enhanced {name.title().replace('_', ' ')} strategy initialized")
 
     async def _initialize_market_analysis(self):
@@ -195,7 +195,7 @@ class EnhancedTradingAISuperpower:
     async def _send_startup_report(self):
         """Send enhanced startup report"""
         balance_info = self.risk_manager.get_risk_metrics()
-        
+
         message = f"""
 🏛️ **ENHANCED TRADING AI SYSTEM ONLINE**
 
@@ -222,7 +222,7 @@ class EnhancedTradingAISuperpower:
     async def run_enhanced_trading_cycle(self):
         """Enhanced main trading loop with advanced features"""
         cycle_count = 0
-        
+
         while self.is_running and not self.emergency_stop:
             try:
                 cycle_start = time.time()
@@ -244,17 +244,17 @@ class EnhancedTradingAISuperpower:
 
                 # Generate and prioritize signals
                 all_signals = await self._generate_prioritized_signals()
-                
+
                 # Execute trades with portfolio optimization
                 executed_trades = await self._execute_optimized_trades(all_signals)
-                
+
                 # Update performance metrics
                 await self._update_performance_metrics()
 
                 # Log enhanced cycle summary
                 cycle_time = time.time() - cycle_start
                 self.execution_times.append(cycle_time)
-                
+
                 if executed_trades > 0:
                     logger.info(f"💰 Executed {executed_trades} optimized trades")
                     await self._send_trade_summary(executed_trades)
@@ -278,18 +278,18 @@ class EnhancedTradingAISuperpower:
         if self.risk_manager.check_daily_loss_limit():
             await self.notifier.send_message("🛑 Daily loss limit reached - trading paused")
             return True
-        
+
         # Check consecutive losses
         if self.consecutive_losses >= self.max_consecutive_losses:
             await self.notifier.send_message(f"🛑 {self.consecutive_losses} consecutive losses - emergency stop")
             return True
-        
+
         # Check maximum drawdown
         risk_metrics = self.risk_manager.get_risk_metrics()
         if risk_metrics['current_balance'] < risk_metrics['initial_balance'] * 0.85:  # 15% drawdown
             await self.notifier.send_message("🛑 Maximum drawdown exceeded - emergency stop")
             return True
-        
+
         return False
 
     async def _update_market_conditions(self):
@@ -298,7 +298,7 @@ class EnhancedTradingAISuperpower:
             # This would analyze recent price movements across markets
             # For now, using placeholder logic
             self.market_volatility = np.random.uniform(0.01, 0.05)  # 1-5% volatility
-            
+
             # Determine market trend (simplified)
             if self.market_volatility > 0.035:
                 self.market_trend = 'volatile'
@@ -308,71 +308,71 @@ class EnhancedTradingAISuperpower:
                 self.market_trend = 'bearish'
             else:
                 self.market_trend = 'neutral'
-            
+
             self.last_volatility_check = datetime.now()
-            
+
         except Exception as e:
             logger.error(f"❌ Market condition update failed: {e}")
 
     async def _generate_prioritized_signals(self):
         """Generate and prioritize signals from all strategies"""
         all_signals = []
-        
+
         for strategy_name, strategy_config in self.strategies.items():
             try:
                 strategy = strategy_config['handler']
                 signals = await strategy.generate_signals()
-                
+
                 # Add strategy metadata to signals
                 for signal in signals:
                     signal['strategy'] = strategy_name
                     signal['weight'] = strategy_config['weight']
                     signal['max_positions'] = strategy_config['max_positions']
-                    
+
                     # Adjust confidence based on strategy performance
                     strategy_perf = self.strategy_performance[strategy_name]
                     if strategy_perf['win_rate'] > 0.6:  # Good performance
                         signal['confidence'] *= 1.1
                     elif strategy_perf['win_rate'] < 0.4:  # Poor performance
                         signal['confidence'] *= 0.9
-                
+
                 all_signals.extend(signals)
-                
+
             except Exception as e:
                 logger.error(f"❌ Signal generation failed for {strategy_name}: {e}")
-        
+
         # Sort signals by confidence score and strategic priority
         all_signals.sort(key=lambda s: s['confidence'] * s['weight'], reverse=True)
-        
+
         return all_signals
 
     async def _execute_optimized_trades(self, signals):
         """Execute trades with portfolio optimization"""
         executed_trades = 0
         strategy_positions = defaultdict(int)
-        
+
         for signal in signals:
             try:
                 strategy_name = signal['strategy']
-                
+
                 # Check strategy position limits
                 if strategy_positions[strategy_name] >= signal['max_positions']:
                     continue
-                
+
                 # Check correlation with existing positions
                 if await self._check_position_correlation(signal):
                     continue
-                
+
                 # Execute trade based on asset type
                 if strategy_name == 'forex_momentum':
                     success = await self._execute_enhanced_forex_trade(signal)
                 else:
                     success = await self._execute_enhanced_crypto_trade(signal)
-                
+
                 if success:
                     executed_trades += 1
                     strategy_positions[strategy_name] += 1
-                    
+
                     # Update active positions
                     position_id = f"{signal['pair']}_{datetime.now().timestamp()}"
                     self.active_positions[position_id] = {
@@ -380,14 +380,14 @@ class EnhancedTradingAISuperpower:
                         'strategy': strategy_name,
                         'timestamp': datetime.now()
                     }
-                
+
                 # Limit total trades per cycle
                 if executed_trades >= 5:  # Max 5 trades per cycle
                     break
-                    
+
             except Exception as e:
                 logger.error(f"❌ Trade execution failed: {e}")
-        
+
         return executed_trades
 
     async def _check_position_correlation(self, signal):
@@ -395,10 +395,10 @@ class EnhancedTradingAISuperpower:
         # Simplified correlation check
         pair = signal['pair']
         base_currency = pair[:3] if len(pair) >= 6 else pair
-        
+
         similar_positions = sum(1 for pos in self.active_positions.values() 
                               if pos['signal']['pair'].startswith(base_currency))
-        
+
         return similar_positions >= 2  # Max 2 positions with same base currency
 
     async def _execute_enhanced_crypto_trade(self, signal):
@@ -407,18 +407,18 @@ class EnhancedTradingAISuperpower:
             # Enhanced risk validation
             if not await self.risk_manager.validate_trade(signal):
                 return False
-            
+
             # Calculate optimized position size
             position_size = self._calculate_optimized_position_size(signal)
-            
+
             # Execute trade
             profit = await self.execute_live_trade(signal, position_size)
-            
+
             # Update tracking
             await self._update_trade_tracking(signal, profit, 'crypto')
-            
+
             return profit != 0
-            
+
         except Exception as e:
             logger.error(f"❌ Enhanced crypto trade failed: {e}")
             return False
@@ -429,18 +429,18 @@ class EnhancedTradingAISuperpower:
             # Enhanced risk validation
             if not await self.risk_manager.validate_trade(signal):
                 return False
-            
+
             # Calculate optimized position size
             position_size = self._calculate_optimized_position_size(signal)
-            
+
             # Execute forex trade
             profit = await self.metatrader_manager.execute_forex_trade(signal, position_size)
-            
+
             # Update tracking
             await self._update_trade_tracking(signal, profit, 'forex')
-            
+
             return profit != 0
-            
+
         except Exception as e:
             logger.error(f"❌ Enhanced forex trade failed: {e}")
             return False
@@ -448,14 +448,14 @@ class EnhancedTradingAISuperpower:
     def _calculate_optimized_position_size(self, signal):
         """Calculate position size with multiple optimization factors"""
         base_size = self.risk_manager.calculate_position_size(signal)
-        
+
         # Market volatility adjustment
         vol_adjustment = 1.0
         if self.market_volatility > 0.04:  # High volatility
             vol_adjustment = 0.5
         elif self.market_volatility < 0.02:  # Low volatility
             vol_adjustment = 1.2
-        
+
         # Strategy performance adjustment
         strategy_perf = self.strategy_performance[signal['strategy']]
         perf_adjustment = 1.0
@@ -463,35 +463,35 @@ class EnhancedTradingAISuperpower:
             perf_adjustment = 1.1
         elif strategy_perf['win_rate'] < 0.4:
             perf_adjustment = 0.8
-        
+
         # Confidence adjustment
         confidence_adjustment = signal['confidence']
-        
+
         optimized_size = base_size * vol_adjustment * perf_adjustment * confidence_adjustment
-        
+
         return max(optimized_size, base_size * 0.5)  # Minimum 50% of base size
 
     async def _update_trade_tracking(self, signal, profit, trade_type):
         """Update comprehensive trade tracking"""
         strategy_name = signal['strategy']
-        
+
         # Update overall metrics
         self.total_profit += profit
         self.daily_profit += profit
         self.trade_count += 1
-        
+
         if profit > 0:
             self.winning_trades += 1
             self.consecutive_losses = 0
         else:
             self.losing_trades += 1
             self.consecutive_losses += 1
-        
+
         # Update strategy performance
         strategy_perf = self.strategy_performance[strategy_name]
         strategy_perf['trades'] += 1
         strategy_perf['profit'] += profit
-        
+
         if strategy_perf['trades'] > 0:
             strategy_perf['win_rate'] = self.winning_trades / strategy_perf['trades']
             strategy_perf['avg_profit'] = strategy_perf['profit'] / strategy_perf['trades']
@@ -500,7 +500,7 @@ class EnhancedTradingAISuperpower:
         """Update advanced performance metrics"""
         if self.trade_count > 0:
             self.win_rate = self.winning_trades / self.trade_count
-            
+
             if self.losing_trades > 0 and self.winning_trades > 0:
                 avg_win = self.total_profit / self.winning_trades if self.winning_trades > 0 else 0
                 avg_loss = abs(self.total_profit) / self.losing_trades if self.losing_trades > 0 else 1
@@ -509,36 +509,36 @@ class EnhancedTradingAISuperpower:
     def _calculate_adaptive_sleep_time(self):
         """Calculate adaptive sleep time based on market conditions"""
         base_sleep = 30  # 30 seconds base
-        
+
         # Faster cycles in volatile markets
         if self.market_volatility > 0.04:
             return base_sleep * 0.5  # 15 seconds
         elif self.market_volatility < 0.02:
             return base_sleep * 1.5  # 45 seconds
-        
+
         return base_sleep
 
     async def _rebalance_portfolio(self):
         """Rebalance portfolio based on strategy performance"""
         try:
             logger.info("🔄 Performing portfolio rebalancing...")
-            
+
             # Analyze strategy performance
             best_strategy = max(self.strategy_performance.items(), 
                               key=lambda x: x[1].get('win_rate', 0))
             worst_strategy = min(self.strategy_performance.items(), 
                                key=lambda x: x[1].get('win_rate', 1))
-            
+
             logger.info(f"📊 Best Strategy: {best_strategy[0]} (Win Rate: {best_strategy[1].get('win_rate', 0)*100:.1f}%)")
             logger.info(f"📊 Worst Strategy: {worst_strategy[0]} (Win Rate: {worst_strategy[1].get('win_rate', 0)*100:.1f}%)")
-            
+
             # Send rebalancing report
             await self.notifier.send_message(
                 f"🔄 Portfolio Rebalancing Complete\n"
                 f"Top Performer: {best_strategy[0].title().replace('_', ' ')}\n"
                 f"Needs Improvement: {worst_strategy[0].title().replace('_', ' ')}"
             )
-            
+
         except Exception as e:
             logger.error(f"❌ Portfolio rebalancing failed: {e}")
 
@@ -546,7 +546,7 @@ class EnhancedTradingAISuperpower:
         """Send enhanced trade summary"""
         if trade_count > 2:  # Only for significant trading activity
             risk_metrics = self.risk_manager.get_risk_metrics()
-            
+
             message = f"""
 💰 **TRADING ACTIVITY SUMMARY**
 
@@ -569,29 +569,29 @@ class EnhancedTradingAISuperpower:
             if not self.live_executor:
                 logger.error("❌ Live executor not available - REAL TRADING REQUIRED")
                 return 0
-            
+
             exchange_name = 'binance'
             symbol = signal['pair']
             side = signal['action']
-            
+
             current_price = signal['price']
             amount = position_size / current_price
-            
+
             order = await self.live_executor.execute_market_order(
                 exchange_name=exchange_name,
                 symbol=symbol,
                 side=side,
                 amount=amount
             )
-            
+
             if side == 'buy':
                 profit = (signal['target'] - current_price) * amount
             else:
                 profit = (current_price - signal['target']) * amount
-                
+
             logger.info(f"💰 LIVE TRADE EXECUTED: {symbol} - ${profit:.2f} expected profit")
             return profit
-            
+
         except Exception as e:
             logger.error(f"❌ Live trade execution failed: {e}")
             return 0
@@ -614,7 +614,7 @@ class EnhancedTradingAISuperpower:
 # Enhanced main execution
 async def main():
     """Enhanced main entry point"""
-    trading_ai = EnhancedTradingAISuperpower()
+    trading_ai = TradingAISuperpower()
 
     try:
         await trading_ai.start_enhanced_system()
