@@ -456,3 +456,4 @@ class MetaTraderManager:
     def get_supported_pairs(self):
         """Get list of supported forex pairs"""
         return self.forex_pairs
+
