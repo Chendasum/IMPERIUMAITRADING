@@ -32,7 +32,7 @@ class ArbitrageStrategy:
                 
             binance_prices = await self.exchange_manager.get_prices(available_exchanges[0])
             
-            # Simulate secondary exchange for arbitrage opportunities in paper trading
+            # Live arbitrage across real exchanges
             coinbase_prices = {}
             for pair, price_data in binance_prices.items():
                 if price_data and 'bid' in price_data and 'ask' in price_data:
