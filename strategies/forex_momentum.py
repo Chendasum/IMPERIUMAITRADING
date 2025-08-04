@@ -31,9 +31,13 @@ class ForexMomentumStrategy:
             
             for pair in forex_pairs:
                 # Get historical data for analysis
-                ohlcv = await self.metatrader_manager.get_forex_ohlcv(
-                    pair, self.timeframe, self.lookback_periods + 5
-                )
+                if self.metatrader_manager:
+                    ohlcv = await self.metatrader_manager.get_forex_ohlcv(
+                        pair, self.timeframe, self.lookback_periods + 5
+                    )
+                else:
+                    logger.warning("❌ MetaTrader manager not initialized")
+                    continue
                 
                 if len(ohlcv) >= self.lookback_periods:
                     signal = await self._analyze_forex_momentum(pair, ohlcv)
