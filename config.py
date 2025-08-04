@@ -11,9 +11,9 @@ class TradingConfig:
     COINBASE_API_KEY = os.getenv('COINBASE_API_KEY')
     COINBASE_SECRET_KEY = os.getenv('COINBASE_SECRET_KEY')
 
-    # Telegram Configuration
+    # Telegram Configuration  
     TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-    TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+    TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID', os.getenv('ADMIN_CHAT_ID'))
 
     # Trading Parameters
     TRADING_MODE = 'LIVE'  # REAL TRADING ONLY - NO SIMULATION
