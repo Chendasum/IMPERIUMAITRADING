@@ -184,18 +184,11 @@ class TradingAISuperpower:
             # Calculate position size
             position_size = self.risk_manager.calculate_position_size(signal)
 
-            if self.config.TRADING_MODE == 'paper':
-                # Paper trading
-                profit = await self.simulate_trade(signal, position_size)
-                logger.info(
-                    f"📊 PAPER TRADE: {signal['pair']} - {signal['action']} - Profit: ${profit:.2f}"
-                )
-            else:
-                # Live trading with real money
-                profit = await self.execute_live_trade(signal, position_size)
-                logger.info(
-                    f"💰 LIVE TRADE EXECUTED: {signal['pair']} - {signal['action']} - Profit: ${profit:.2f}"
-                )
+            # LIVE TRADING ONLY - NO SIMULATION
+            profit = await self.execute_live_trade(signal, position_size)
+            logger.info(
+                f"💰 LIVE TRADE EXECUTED: {signal['pair']} - {signal['action']} - Profit: ${profit:.2f}"
+            )
 
             # Update performance tracking
             self.total_profit += profit
@@ -229,14 +222,9 @@ class TradingAISuperpower:
             # Calculate position size for forex
             position_size = self.risk_manager.calculate_position_size(signal)
 
-            if self.config.TRADING_MODE == 'paper':
-                # Paper trading for forex
-                profit = await self.metatrader_manager.execute_forex_trade(signal, position_size)
-                logger.info(f"💱 PAPER FOREX TRADE: {signal['pair']} - {signal['action']} - Profit: ${profit:.2f}")
-            else:
-                # Live forex trading
-                profit = await self.metatrader_manager.execute_forex_trade(signal, position_size)
-                logger.info(f"💱 LIVE FOREX TRADE: {signal['pair']} - {signal['action']} - Profit: ${profit:.2f}")
+            # LIVE FOREX TRADING ONLY - NO SIMULATION
+            profit = await self.metatrader_manager.execute_forex_trade(signal, position_size)
+            logger.info(f"💱 LIVE FOREX TRADE: {signal['pair']} - {signal['action']} - Profit: ${profit:.2f}")
 
             # Update performance tracking
             self.total_profit += profit
@@ -259,29 +247,14 @@ class TradingAISuperpower:
             await self.notifier.send_message(f"🚨 Forex trade execution failed: {e}")
             return False
 
-    async def simulate_trade(self, signal, position_size):
-        """Simulate trade for paper trading"""
-        # Simulate trade execution with realistic slippage
-        slippage = 0.001  # 0.1% slippage simulation
-
-        if signal['action'] == 'buy':
-            entry_price = signal['price'] * (1 + slippage)
-            exit_price = signal['target'] * (1 - slippage)
-        else:
-            entry_price = signal['price'] * (1 - slippage)
-            exit_price = signal['target'] * (1 + slippage)
-
-        profit_percentage = (exit_price - entry_price) / entry_price
-        profit_amount = position_size * profit_percentage
-
-        return profit_amount
+    # ALL SIMULATION FUNCTIONS REMOVED - LIVE TRADING ONLY
 
     async def execute_live_trade(self, signal, position_size):
         """Execute live trade with real money"""
         try:
             if not self.live_executor:
-                logger.warning("⚠️ Live executor not available, using simulation")
-                return await self.simulate_trade(signal, position_size)
+                logger.error("❌ Live executor not available - REAL TRADING REQUIRED")
+                return 0
             
             exchange_name = 'binance'  # Primary exchange
             symbol = signal['pair']
@@ -311,9 +284,8 @@ class TradingAISuperpower:
             
         except Exception as e:
             logger.error(f"❌ Live trade execution failed: {e}")
-            logger.warning("⚠️ Falling back to simulation mode")
-            # Fallback to simulation if live execution fails
-            return await self.simulate_trade(signal, position_size)
+            # NO SIMULATION FALLBACK - LIVE TRADING ONLY
+            return 0
 
     async def daily_reset(self):
         """Reset daily tracking"""
