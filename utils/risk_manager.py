@@ -379,6 +379,7 @@ class RiskManager:
         return {
             'current_balance': self.current_balance or 10000,
             'peak_balance': self.peak_balance or 10000,
+            'initial_balance': self.initial_balance or 10000,
             'daily_profit': self.daily_profits,
             'daily_loss': self.daily_losses,
             'total_positions': len(self.open_positions),
