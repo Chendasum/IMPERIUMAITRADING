@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import requests
 from config import TradingConfig
 
 logger = logging.getLogger(__name__)
@@ -34,13 +35,25 @@ class TelegramNotifier:
             return
             
         try:
-            # In a real implementation, this would use python-telegram-bot
-            # For now, we'll just log the message
-            logger.info(f"📱 TELEGRAM: {message}")
-            # TODO: Implement actual Telegram API call
+            # Real Telegram API integration
+            url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
+            payload = {
+                'chat_id': str(self.chat_id),
+                'text': message[:4096],  # Telegram message limit
+                'parse_mode': 'Markdown'
+            }
+            
+            response = requests.post(url, json=payload, timeout=10)
+            
+            if response.status_code == 200:
+                logger.info(f"📱 TELEGRAM: Message sent successfully")
+            else:
+                logger.error(f"❌ Telegram API error: {response.status_code}")
+                logger.info(f"📢 FALLBACK NOTIFICATION: {message}")
             
         except Exception as e:
             logger.error(f"❌ Failed to send Telegram message: {e}")
+            logger.info(f"📢 FALLBACK NOTIFICATION: {message}")
     
     async def send_trade_alert(self, trade_data):
         """Send trade execution alert"""
