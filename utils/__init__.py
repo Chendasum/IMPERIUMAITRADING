@@ -1,4 +1,0 @@
-
-"""
-Trading utilities package
-"""
