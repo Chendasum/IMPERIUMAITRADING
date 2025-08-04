@@ -23,8 +23,8 @@ class MetaTraderManager:
         # Correct MetaAPI base URLs
         self.base_urls = {
             'provisioning': 'https://mt-provisioning-api-v1.agiliumtrade.agiliumtrade.ai',
-            'client': 'https://mt-client-api-v1.agiliumtrade.agiliumtrade.ai',
-            'streaming': 'https://mt-market-data-client-api-v1.agiliumtrade.agiliumtrade.ai'
+            'client': 'https://mt-client-api-48ec6j1qlzb1cpk1.new-york.agiliumtrade.ai',
+            'streaming': 'https://mt-market-data-client-api-48ec6j1qlzb1cpk1.new-york.agiliumtrade.ai'
         }
         
     async def initialize(self):
